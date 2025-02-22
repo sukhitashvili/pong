@@ -6,14 +6,15 @@ import torch.optim as optim
 import torch.nn as nn
 
 from model import MoveClassifier
-from utils import display_observation, image_preprocess, policy_forward, discount_rewards
+from utils import display_observation, image_preprocess, policy_forward, discount_rewards, init_all_seeds
 
 display = False
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+init_all_seeds(42)
 # hyperparameters
 hidden_dim = 10
 batch_size = 32  # how many episodes to do a param update after
-learning_rate = 1e-4
+learning_rate = 1e-2
 gamma = 0.99  # discount factor for reward
 weight_decay = 1e-4
 

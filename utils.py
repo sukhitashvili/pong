@@ -1,3 +1,4 @@
+import random
 import time
 
 import cv2
@@ -50,6 +51,7 @@ def discount_rewards(rewards: list, gamma: float, device) -> torch.Tensor:
     discounted_r /= torch.std(discounted_r)
     return discounted_r
 
+
 @torch.no_grad()
 def policy_forward(preprocessed_observation: torch.Tensor, model: nn.Module) -> int:
     """
@@ -67,5 +69,20 @@ def policy_forward(preprocessed_observation: torch.Tensor, model: nn.Module) -> 
     return action
 
 
-def policy_backward(observations: np.ndarray, model: nn.Module):
-    pass
+def init_all_seeds(seed_value):
+    """
+    Initialize all seeds for reproducibility in Python functions.
+    Args:
+        seed_value (int): The seed value to initialize the random number generators.
+    """
+    # For Python's random module
+    random.seed(seed_value)
+    # For numpy
+    np.random.seed(seed_value)
+    # For PyTorch (if using)
+    if torch.cuda.is_available():
+        torch.manual_seed(seed_value)
+        torch.cuda.manual_seed(seed_value)
+        torch.cuda.manual_seed_all(seed_value)  # For multi-GPU setups
+    else:
+        torch.manual_seed(seed_value)
