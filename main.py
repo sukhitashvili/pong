@@ -12,9 +12,9 @@ display = False
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 init_all_seeds(42)
 # hyperparameters
-hidden_dim = 10
+hidden_dim = 64
 batch_size = 32  # how many episodes to do a param update after
-learning_rate = 1e-2
+learning_rate = 0.001
 gamma = 0.99  # discount factor for reward
 weight_decay = 1e-4
 
