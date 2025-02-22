@@ -1,4 +1,3 @@
-import cv2
 import ale_py
 import gymnasium as gym
 import numpy as np
