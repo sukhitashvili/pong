@@ -45,6 +45,8 @@ def discount_rewards(rewards: list, gamma: float, device) -> torch.Tensor:
         running_add = running_add * gamma + rewards[t]
         discounted_r[t] = running_add
     discounted_r = torch.tensor(discounted_r).to(device)
+    # Only reduce variance, but do not recenter value! diff with Karpathy's implementation
+    discounted_r /= torch.std(discounted_r)
     return discounted_r
 
 @torch.no_grad()
