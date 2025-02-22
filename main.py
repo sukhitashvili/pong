@@ -14,7 +14,7 @@ init_all_seeds(42)
 # hyperparameters
 hidden_dim = 10
 batch_size = 32  # how many episodes to do a param update after
-learning_rate = 1e-4
+learning_rate = 1e-2
 gamma = 0.99  # discount factor for reward
 weight_decay = 1e-4
 
@@ -22,7 +22,7 @@ weight_decay = 1e-4
 D = 80 * 80  # input dimensionality: 80x80 grid
 model = MoveClassifier(num_features=D, hidden_size=hidden_dim)
 model.to(device)
-optimizer = optim.AdamW(model.parameters(), lr=learning_rate, weight_decay=weight_decay)
+optimizer = optim.AdamW(model.parameters(), lr=learning_rate) #, weight_decay=weight_decay)
 loss_fn = nn.BCELoss(reduction='none')
 
 env = gym.make("Pong-v4", render_mode="rgb_array")
@@ -69,16 +69,19 @@ while True:
         # calculate loss and grads
         model_preds = model(inputs)
         # -1 multiplication is used to go uphill, since we want maximization of positive reward/action probability
-        loss = -1 * loss_fn(model_preds.squeeze(-1), targets) * discounted_r
-        loss = loss.mean()
-        loss.backward()
+        loss = -1 * loss_fn(model_preds.squeeze(-1), targets)
+        weighted_loss = loss * discounted_r
+        weighted_loss = weighted_loss.mean()
+        weighted_loss.backward()
 
         # backward only after batch size number of episodes
         if episode_number % batch_size == 0:
             optimizer.step()
             optimizer.zero_grad()
             print(
-                f"Episode number {episode_number}: \n\t\tMean episode reward: {episode_mean_reward:.4f} :: loss: {loss.item():.7f}")
+                f"Episode number {episode_number}: \n\t\tMean episode reward: {episode_mean_reward:.4f} "
+                f":: loss: {loss.mean().item():.7f}"
+                f":: discounted loss: {weighted_loss.item():.7f}")
 
         if episode_mean_reward > best_mean_episode_reward:
             best_mean_episode_reward = episode_mean_reward
