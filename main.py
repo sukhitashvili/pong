@@ -81,7 +81,7 @@ while True:
             print(
                 f"Episode number {episode_number}: \n\t\tMean episode reward: {episode_mean_reward:.4f} "
                 f":: loss: {loss.mean().item():.7f}"
-                f":: discounted loss: {weighted_loss.item():.7f}")
+                f":: weighted loss: {weighted_loss.item():.7f}")
 
         if episode_mean_reward > best_mean_episode_reward:
             best_mean_episode_reward = episode_mean_reward
