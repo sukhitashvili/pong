@@ -14,7 +14,7 @@ init_all_seeds(42)
 # hyperparameters
 hidden_dim = 10
 batch_size = 32  # how many episodes to do a param update after
-learning_rate = 1e-2
+learning_rate = 1e-4
 gamma = 0.99  # discount factor for reward
 weight_decay = 1e-4
 
