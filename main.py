@@ -77,7 +77,7 @@ while True:
             optimizer.step()
             optimizer.zero_grad()
             print(
-                f"Episode number {episode_number}: \n\t\tMean episode reward: {episode_mean_reward:.4f} :: loss: {loss.item():.4f}")
+                f"Episode number {episode_number}: \n\t\tMean episode reward: {episode_mean_reward:.4f} :: loss: {loss.item():.7f}")
 
         if episode_mean_reward > best_mean_episode_reward:
             best_mean_episode_reward = episode_mean_reward
