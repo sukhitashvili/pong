@@ -47,7 +47,7 @@ def discount_rewards(rewards: list, gamma: float, device) -> torch.Tensor:
     discounted_r = torch.tensor(discounted_r).to(device)
     return discounted_r
 
-
+@torch.no_grad()
 def policy_forward(preprocessed_observation: torch.Tensor, model: nn.Module) -> int:
     """
     move up: 2
