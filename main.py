@@ -1,9 +1,8 @@
 import ale_py
 import gymnasium as gym
-import numpy as np
 import torch
-import torch.optim as optim
 import torch.nn as nn
+import torch.optim as optim
 
 from model import MoveClassifier
 from utils import display_observation, image_preprocess, policy_forward, discount_rewards, init_all_seeds
@@ -13,7 +12,7 @@ device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 init_all_seeds(42)
 # hyperparameters
 hidden_dim = 200
-batch_size = 32  # how many episodes to do a param update after
+batch_size = 10  # how many episodes to do a param update after
 learning_rate = 0.001
 gamma = 0.99  # discount factor for reward
 weight_decay = 1e-4
@@ -22,7 +21,7 @@ weight_decay = 1e-4
 D = 80 * 80  # input dimensionality: 80x80 grid
 model = MoveClassifier(num_features=D, hidden_size=hidden_dim)
 model.to(device)
-optimizer = optim.AdamW(model.parameters(), lr=learning_rate) #, weight_decay=weight_decay)
+optimizer = optim.AdamW(model.parameters(), lr=learning_rate)  # , weight_decay=weight_decay)
 loss_fn = nn.BCELoss(reduction='none')
 
 env = gym.make("Pong-v4", render_mode="rgb_array")
@@ -31,8 +30,9 @@ observation = observation[0]  # first observation is tuple of [numpy image, game
 
 prev_x = None  # used in computing the difference frame
 input_data, gt_labels, action_rewards = [], [], []
-best_episode_won_games = float('-inf')
 reward_sum = 0
+batch_reward_sum = 0
+best_batch_reward = float('-inf')
 episode_number = 0
 
 while True:
@@ -59,39 +59,43 @@ while True:
 
     if terminated or truncated:  # an episode finished, finishes 22 played games
         episode_number += 1
-        episode_won_games = (np.array(action_rewards) == 1).sum()
+        batch_reward_sum += reward_sum
 
         # stack inputs, targets and rewards into a batch
         inputs = torch.stack([torch.tensor(i) for i in input_data]).to(device)
         discounted_r = discount_rewards(rewards=action_rewards, gamma=gamma, device=device)
         targets = torch.stack([torch.tensor(i) for i in gt_labels]).to(device).float()
 
-        # calculate loss and grads
+        # Calculate Loss and Grads
         model_preds = model(inputs)
         # -1 multiplication is used to go uphill, since we want maximization of positive reward/action probability
-        loss = -1 * loss_fn(model_preds.squeeze(-1), targets)
+        loss = -1 * loss_fn(model_preds.squeeze(-1), targets) / batch_size  # batch_size == grad accumulation iterations
         weighted_loss = loss * discounted_r
         weighted_loss = weighted_loss.mean()
         weighted_loss.backward()
 
-        # backward only after batch size number of episodes
+        # update after batch size of episodes
         if episode_number % batch_size == 0:
             optimizer.step()
             optimizer.zero_grad()
             print(
-                f"Episode number {episode_number}: \n\t\tEpisode won games: {episode_won_games:.1f} "
+                f"Episode number {episode_number}:"
+                f"\n\t\t Batch reward sum: {batch_reward_sum:.4f} "
                 f":: loss: {loss.mean().item():.7f} "
                 f":: weighted loss: {weighted_loss.item():.7f}")
 
-        if episode_won_games > best_episode_won_games:
-            best_episode_won_games = episode_won_games
-            torch.save(model, f"best_episode_won_games.pth")
+            if batch_reward_sum > best_batch_reward:
+                best_batch_reward = batch_reward_sum
+                torch.save(model, f"best_reward_model.pth")
+
+            batch_reward_sum = 0
 
         # reset the values
         input_data, gt_labels, action_rewards = [], [], []
         observation = env.reset()  # reset env
-        observation = observation[0]
+        observation = observation[0]  # first observation is tuple of [numpy image, game info]
         prev_x = None
+        reward_sum = 0
 
 print("Game Over")
 env.close()
