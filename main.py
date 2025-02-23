@@ -33,6 +33,7 @@ prev_x = None  # used in computing the difference frame
 input_data, gt_labels, action_rewards = [], [], []
 reward_sum = 0
 batch_reward_sum = 0
+exp_mean_reward = None
 best_batch_reward = float('-inf')
 batch_loss = []
 batch_weighted_loss = []
@@ -78,8 +79,9 @@ while True:
         weighted_loss.backward()
 
         # track losses
-        batch_loss.append(loss.sum().item())
+        batch_loss.append(loss.mean().item())  # reporting mean loss instead of the sum
         batch_weighted_loss.append(weighted_loss.item())
+        exp_mean_reward = reward_sum if exp_mean_reward is None else exp_mean_reward * 0.99 + reward_sum * 0.01
 
         # update after batch size of episodes
         if episode_number % batch_size == 0:
@@ -88,8 +90,9 @@ while True:
             print(
                 f"Episode number {episode_number}:"
                 f"\n\t\t Batch reward sum: {batch_reward_sum:.4f} "
-                f":: loss: {np.mean(batch_loss):.7f} "
-                f":: weighted loss: {np.mean(batch_weighted_loss):.7f}")
+                f":: Exp mean reward: {exp_mean_reward:.7f} "
+                f":: Loss: {np.mean(batch_loss):.7f} "
+                f":: Weighted loss: {np.mean(batch_weighted_loss):.7f} ")
 
             if batch_reward_sum > best_batch_reward:
                 best_batch_reward = batch_reward_sum
