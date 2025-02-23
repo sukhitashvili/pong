@@ -74,8 +74,9 @@ while True:
         # -1 multiplication is used to go uphill, since we want maximization of positive reward/action probability
         loss = -1 * loss_fn(model_preds.squeeze(-1), targets) / batch_size  # batch_size == grad accumulation iterations
         weighted_loss = loss * discounted_r
-        weighted_loss = weighted_loss.mean()
+        weighted_loss = weighted_loss.sum()
         weighted_loss.backward()
+
         # track losses
         batch_loss.append(loss.sum().item())
         batch_weighted_loss.append(weighted_loss.item())
