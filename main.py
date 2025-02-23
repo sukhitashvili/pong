@@ -33,6 +33,8 @@ input_data, gt_labels, action_rewards = [], [], []
 reward_sum = 0
 batch_reward_sum = 0
 best_batch_reward = float('-inf')
+batch_loss = []
+batch_weighted_loss = []
 episode_number = 0
 
 while True:
@@ -73,6 +75,9 @@ while True:
         weighted_loss = loss * discounted_r
         weighted_loss = weighted_loss.mean()
         weighted_loss.backward()
+        # track losses
+        batch_loss.append(loss.sum().item())
+        batch_weighted_loss.append(weighted_loss.item())
 
         # update after batch size of episodes
         if episode_number % batch_size == 0:
@@ -81,14 +86,16 @@ while True:
             print(
                 f"Episode number {episode_number}:"
                 f"\n\t\t Batch reward sum: {batch_reward_sum:.4f} "
-                f":: loss: {loss.mean().item():.7f} "
-                f":: weighted loss: {weighted_loss.item():.7f}")
+                f":: loss: {np.mean(batch_loss):.7f} "
+                f":: weighted loss: {np.mean(batch_weighted_loss):.7f}")
 
             if batch_reward_sum > best_batch_reward:
                 best_batch_reward = batch_reward_sum
                 torch.save(model, f"best_reward_model.pth")
 
             batch_reward_sum = 0
+            batch_loss = []
+            batch_weighted_loss = []
 
         # reset the values
         input_data, gt_labels, action_rewards = [], [], []
