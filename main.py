@@ -14,7 +14,7 @@ init_all_seeds(42)
 # hyperparameters
 hidden_dim = 200
 batch_size = 32  # how many episodes to do a param update after
-learning_rate = 0.1
+learning_rate = 0.01
 gamma = 0.99  # discount factor for reward
 weight_decay = 1e-4
 
@@ -22,7 +22,7 @@ weight_decay = 1e-4
 D = 80 * 80  # input dimensionality: 80x80 grid
 model = MoveClassifier(num_features=D, hidden_size=hidden_dim)
 model.to(device)
-optimizer = optim.AdamW(model.parameters(), lr=learning_rate)  # , weight_decay=weight_decay)
+optimizer = optim.AdamW(model.parameters(), lr=learning_rate, weight_decay=weight_decay)
 loss_fn = nn.BCELoss(reduction='none')
 
 env = gym.make("Pong-v4", render_mode="rgb_array")
