@@ -32,9 +32,9 @@ observation = observation[0]  # first observation is tuple of [numpy image, game
 prev_x = None  # used in computing the difference frame
 input_data, gt_labels, action_rewards = [], [], []
 reward_sum = 0
-batch_reward_sum = 0
+batch_mean_reward = []
 exp_mean_reward = None
-best_batch_reward = float('-inf')
+best_batch_mean_reward = float('-inf')
 batch_loss = []
 batch_weighted_loss = []
 episode_number = 0
@@ -63,7 +63,7 @@ while True:
 
     if terminated or truncated:  # an episode finished, finishes 22 played games
         episode_number += 1
-        batch_reward_sum += reward_sum
+        batch_mean_reward.append(reward_sum)
 
         # stack inputs, targets and rewards into a batch
         inputs = torch.stack([torch.tensor(i) for i in input_data]).to(device)
@@ -86,18 +86,19 @@ while True:
         if episode_number % batch_size == 0:
             optimizer.step()
             optimizer.zero_grad()
+            batch_mean_reward = np.mean(batch_mean_reward)
             print(
                 f"Episode number {episode_number}:"
-                f"\n\t\t Batch reward sum: {batch_reward_sum:.4f} "
+                f"\n\t\t Batch mean reward: {batch_mean_reward:.4f} "
                 f":: Exp mean reward: {exp_mean_reward:.7f} "
                 f":: Loss: {np.mean(batch_loss):.7f} "
                 f":: Weighted loss: {np.mean(batch_weighted_loss):.7f} ")
 
-            if batch_reward_sum > best_batch_reward:
-                best_batch_reward = batch_reward_sum
+            if batch_mean_reward > best_batch_mean_reward:
+                best_batch_mean_reward = batch_mean_reward
                 torch.save(model, f"best_reward_model.pth")
 
-            batch_reward_sum = 0
+            batch_mean_reward = []
             batch_loss = []
             batch_weighted_loss = []
 
