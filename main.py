@@ -13,7 +13,7 @@ device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 init_all_seeds(42)
 # hyperparameters
 hidden_dim = 200
-batch_size = 32  # how many episodes to do a param update after
+batch_size = 64  # how many episodes to do a param update after
 learning_rate = 0.01
 gamma = 0.99  # discount factor for reward
 weight_decay = 1e-4
@@ -25,7 +25,7 @@ model.to(device)
 optimizer = optim.AdamW(model.parameters(), lr=learning_rate, weight_decay=weight_decay)
 loss_fn = nn.BCELoss(reduction='none')
 
-env = gym.make("Pong-v4", render_mode="rgb_array")
+env = gym.make("Pong-v4", render_mode="rgb_array")  # render_mode="human" option fails on my PC, thus used opencv
 observation = env.reset(seed=42)
 observation = observation[0]  # first observation is tuple of [numpy image, game info]
 
@@ -61,7 +61,7 @@ while True:
     if display:  # hold any key pressed to watch the game
         display_observation(observation=observation)
 
-    if terminated or truncated:  # an episode finished, finishes 22 played games
+    if terminated or truncated:  # an episode finished, multiple played games
         episode_number += 1
         batch_mean_reward.append(reward_sum)
 
@@ -74,7 +74,7 @@ while True:
         model_preds = model(inputs)
         loss = loss_fn(model_preds.squeeze(-1), targets) / batch_size  # batch_size == grad accumulation iterations
         weighted_loss = loss * discounted_r
-        weighted_loss = weighted_loss.sum()
+        weighted_loss = weighted_loss.sum()  # not average, since each episode is used as a one data sample
         weighted_loss.backward()
 
         # track losses
@@ -88,7 +88,7 @@ while True:
             optimizer.zero_grad()
             batch_mean_reward = np.mean(batch_mean_reward)
             print(
-                f"Episode number {episode_number}:"
+                f"Episode {episode_number}:"
                 f"\n\t\t Batch mean reward: {batch_mean_reward:.4f} "
                 f":: Exp mean reward: {exp_mean_reward:.7f} "
                 f":: Loss: {np.mean(batch_loss):.7f} "
