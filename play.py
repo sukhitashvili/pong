@@ -1,15 +1,11 @@
-
 import argparse
+
 import ale_py
 import gymnasium as gym
-import numpy as np
 import torch
-import torch.nn as nn
-import torch.optim as optim
 
-from model import MoveClassifier
-from utils import display_observation, image_preprocess, policy_forward, discount_rewards, init_all_seeds
-import torch
+from utils import display_observation, image_preprocess, policy_forward
+
 
 @torch.no_grad()
 def main(args):
@@ -45,7 +41,6 @@ def main(args):
             break
 
 
-
 def parse_args():
     ap = argparse.ArgumentParser('Evaluate Parser')
     ap.add_argument('--model_path', type=str, default='best_reward_model.pth',
@@ -54,6 +49,7 @@ def parse_args():
                     help="Device to use")
     args = ap.parse_args()
     return args
+
 
 if __name__ == '__main__':
     args = parse_args()
