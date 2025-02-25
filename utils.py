@@ -12,7 +12,7 @@ def display_observation(observation: np.ndarray) -> None:
     rgb_img = cv2.resize(rgb_img, dsize=None, fx=2, fy=2, interpolation=cv2.INTER_LINEAR)
     cv2.imshow("Pong", rgb_img)
     cv2.waitKey(1)
-    time.sleep(0.05)  # Slow down the rendering
+    time.sleep(0.025)  # Slow down the rendering
 
 
 def image_preprocess(observation: np.ndarray, device):
