@@ -47,7 +47,7 @@ def discount_rewards(rewards: list, gamma: float, device) -> torch.Tensor:
         discounted_r[t] = running_add
     discounted_r = torch.tensor(discounted_r).to(device)
     # normalize discounted rewards for stable updates
-    # discounted_r -= torch.mean(discounted_r)
+    discounted_r -= torch.mean(discounted_r)
     discounted_r /= torch.std(discounted_r)
     return discounted_r
 
