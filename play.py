@@ -23,7 +23,7 @@ def main(args):
 
     # init the game
     env = gym.make("Pong-v4", render_mode="rgb_array")  # render_mode="human" option fails on my PC, thus used opencv
-    observation = env.reset()
+    observation = env.reset(seed=42)
     observation = observation[0]  # first observation is tuple of [numpy image, game info]
 
     while True:
