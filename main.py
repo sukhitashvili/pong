@@ -6,7 +6,7 @@ import torch.nn as nn
 import torch.optim as optim
 
 from model import MoveClassifier
-from utils import display_observation, image_preprocess, policy_forward, discount_rewards, init_all_seeds
+from utils import display_observation, image_preprocess, policy_forward, discount_rewards, init_all_seeds, plot_rewards
 
 display = False
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
@@ -87,6 +87,7 @@ while True:
             optimizer.step()
             optimizer.zero_grad()
             batch_mean_reward = np.mean(batch_mean_reward)
+            plot_rewards(episode=episode_number, exp_reward=exp_mean_reward)
             print(
                 f"Episode {episode_number}:"
                 f"\n\t\t Batch mean reward: {batch_mean_reward:.4f} "

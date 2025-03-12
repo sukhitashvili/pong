@@ -2,6 +2,7 @@ import random
 import time
 
 import cv2
+import matplotlib.pyplot as plt
 import numpy as np
 import torch
 import torch.nn as nn
@@ -86,3 +87,24 @@ def init_all_seeds(seed_value):
         torch.cuda.manual_seed_all(seed_value)  # For multi-GPU setups
     else:
         torch.manual_seed(seed_value)
+
+
+exp_rewards = []
+episodes = []
+
+
+def plot_rewards(episode: int, exp_reward: float) -> None:
+    episodes.append(episode)
+    exp_rewards.append(exp_reward)
+
+    plt.figure(figsize=(13, 10))  # Set figure size
+    plt.plot(episodes, exp_rewards, marker='o', linestyle='-', color='b')
+
+    # Add labels and title
+    plt.xlabel('Episodes')
+    plt.ylabel('Rewards')
+    plt.title('Exponentially weighted reward')
+    # plt.legend()
+    # Save the plot as an image file
+    plt.savefig('plot.png', dpi=300, bbox_inches='tight')
+    plt.close()
