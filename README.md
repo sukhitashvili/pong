@@ -18,7 +18,7 @@ Requirements:
 
 ### Play
 
-To play run: `python3.10 play.py --model_path=best_reward_model.pth --device="cuda:0"`
+To play, run: `python3.10 play.py --model_path=best_reward_model.pth --device="cuda:0"`
 
 ### Train
 
