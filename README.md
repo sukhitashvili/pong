@@ -13,6 +13,7 @@ Slightly modified original code is stored at `karpathys_code.py`, it was adapted
 
 Requirements:
   - Python 3.10+
+  - CUDA Version: 12
   - Install requirements `pip install -r requirements.txt`
 
 ### Play
