@@ -22,7 +22,7 @@ To play, run: `python3.10 play.py --model_path=best_reward_model.pth --device="c
 
 ### Train
 
-To train a new model, run: `python3.10 main.py`
+To train a new model, run: `python3.10 main.py`.
 Check Andrej Karpathy's [Blog](https://karpathy.github.io/2016/05/31/rl/) for more details of the training, algorithm, etc.
 
 # Model Learning Curve
