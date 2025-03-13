@@ -29,7 +29,7 @@ Check Andrej Karpathy's [Blog](https://karpathy.github.io/2016/05/31/rl/) for mo
 
 One episode consists of 21 games, and each point represents exponentially weighted average
 across played episodes. The graph shows that the model
-gradually learns to play the game, and rewards reaches positive values after around 
+gradually learns to play the game, and rewards reach positive values after around 
 4000 episodes. 
 
 Learning slows down after ~4000 episodes, since players play the game equally well. 
