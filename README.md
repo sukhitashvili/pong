@@ -16,11 +16,11 @@ Requirements:
   - CUDA Version: 12 (if CUDA is not available, comment out Nvidia-related packages before installing `requirements.txt` to train on CPU)
   - Install requirements `pip install -r requirements.txt`
 
-### Play
+# Play
 
 To play, run: `python3.10 play.py --model_path=best_reward_model.pth --device="cuda:0"`
 
-### Train
+# Train
 
 To train a new model, run: `python3.10 main.py`.
 Check Andrej Karpathy's [Blog](https://karpathy.github.io/2016/05/31/rl/) for more details of the training, algorithm, etc.
