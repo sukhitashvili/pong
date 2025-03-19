@@ -13,7 +13,7 @@ Slightly modified original code is stored at `karpathys_code.py`, it was adapted
 
 Requirements:
   - Python 3.10+
-  - CUDA Version: 12
+  - CUDA Version: 12 (if CUDA is not available, comment out Nvidia-related packages before installing `requirements.txt` to train on CPU)
   - Install requirements `pip install -r requirements.txt`
 
 ### Play
