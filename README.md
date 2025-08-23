@@ -14,6 +14,8 @@ The training code is located at `main.py`, and the slightly modified original An
 Requirements:
   - Python 3.10+
   - CUDA Version: 12 (if CUDA is not available, comment out Nvidia-related packages before installing `requirements.txt` to train on CPU)
+  - Install C compiler on your system `sudo apt install build-essential`
+  - Install [swig](https://en.wikipedia.org/wiki/SWIG#:~:text=The%20Simplified%20Wrapper%20and%20Interface,%2C%20OCaml%2C%20Octave%2C%20Scilab%20and) `sudo apt-get install swig`
   - Install requirements `pip install -r requirements.txt`
 
 # Train
