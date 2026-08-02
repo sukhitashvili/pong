@@ -6,7 +6,7 @@ The RL agent learns to play Pong via trial and error from pixels, using Policy G
 The training code is located at `main.py`, and the slightly modified original Andrej's code is stored at `karpathys_code.py` (it was adapted for Python 3.10).
 
 
-![My Image](images/screenshot.png)
+![My Image](images/Screenshot 2026-08-02 111341.png)
 
 
 # Installation
